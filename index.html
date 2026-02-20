@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SAP Gen AI SDK — Interview Prep Cheat Sheet</title>
+<style>
+  :root {
+    --sap-blue: #0070f2;
+    --sap-dark: #1a1a2e;
+    --sap-light: #e8f4fd;
+    --sap-green: #107e3e;
+    --sap-orange: #e76500;
+    --sap-red: #bb0000;
+    --sap-purple: #6a1b9a;
+    --card-bg: #ffffff;
+    --border: #dee2e6;
+    --text: #212529;
+    --muted: #6c757d;
+    --code-bg: #1e1e2e;
+    --code-text: #cdd6f4;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #f0f4f8;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* ── Header ── */
+  .hero {
+    background: linear-gradient(135deg, #0070f2 0%, #1a1a6e 60%, #6a1b9a 100%);
+    color: white;
+    padding: 48px 32px 40px;
+    text-align: center;
+  }
+  .hero h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 8px; }
+  .hero p  { font-size: 1.05rem; opacity: 0.88; }
+  .badge-row { display: flex; gap: 10px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
+  .badge {
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Layout ── */
+  .container { max-width: 1100px; margin: 0 auto; padding: 32px 20px 60px; }
+
+  /* ── Section headers ── */
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--sap-blue);
+    margin: 40px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--sap-blue);
+  }
+  .section-title .icon { font-size: 1.4rem; }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    border: 1px solid var(--border);
+  }
+  .card h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--sap-blue);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Grid ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 1.5rem; }
+  }
+
+  /* ── Tables ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  thead tr { background: var(--sap-blue); color: white; }
+  th { padding: 10px 14px; text-align: left; font-weight: 600; }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--border); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:nth-child(even) { background: #f8f9fa; }
+  tbody tr:hover { background: var(--sap-light); }
+
+  /* ── Code blocks ── */
+  pre {
+    background: var(--code-bg);
+    color: var(--code-text);
+    border-radius: 8px;
+    padding: 16px 18px;
+    font-size: 0.82rem;
+    overflow-x: auto;
+    line-height: 1.7;
+    margin-top: 10px;
+  }
+  code { font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; }
+  .kw  { color: #cba6f7; }   /* keyword  */
+  .fn  { color: #89b4fa; }   /* function */
+  .st  { color: #a6e3a1; }   /* string   */
+  .cm  { color: #6c7086; }   /* comment  */
+  .nm  { color: #fab387; }   /* number   */
+
+  /* ── Pipeline diagram ── */
+  .pipeline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    margin: 10px 0;
+  }
+  .pipe-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 560px;
+    background: white;
+    border: 2px solid var(--sap-blue);
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    position: relative;
+  }
+  .pipe-box .label { color: var(--sap-blue); }
+  .pipe-box .desc  { color: var(--muted); font-size: 0.78rem; font-weight: 400; }
+  .pipe-arrow {
+    font-size: 1.3rem;
+    color: var(--sap-blue);
+    margin: 2px 0;
+    line-height: 1;
+  }
+  .pipe-box.optional { border-color: #adb5bd; }
+  .pipe-box.optional .label { color: #495057; }
+  .pipe-box.highlight { border-color: var(--sap-orange); background: #fff8f0; }
+  .pipe-box.highlight .label { color: var(--sap-orange); }
+
+  /* ── One-liner bullets ── */
+  .oneliner-list { list-style: none; padding: 0; }
+  .oneliner-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid #f1f3f5;
+    font-size: 0.9rem;
+  }
+  .oneliner-list li:last-child { border-bottom: none; }
+  .dot {
+    min-width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--sap-blue);
+    margin-top: 6px;
+  }
+  .dot.green  { background: var(--sap-green); }
+  .dot.orange { background: var(--sap-orange); }
+  .dot.red    { background: var(--sap-red); }
+  .dot.purple { background: var(--sap-purple); }
+
+  /* ── Q&A blocks ── */
+  .qa-block { margin-bottom: 12px; }
+  .qa-q {
+    background: #e8f4fd;
+    border-left: 4px solid var(--sap-blue);
+    padding: 8px 14px;
+    border-radius: 0 6px 0 0;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: #003c7a;
+  }
+  .qa-a {
+    background: #f8f9fa;
+    border-left: 4px solid var(--sap-green);
+    padding: 8px 14px;
+    border-radius: 0 0 6px 0;
+    font-size: 0.88rem;
+    color: #1a3a1a;
+  }
+  .qa-a code {
+    background: #e8ffe8;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.82rem;
+  }
+
+  /* ── Comparison boxes ── */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .compare-box {
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .compare-box.yes { background: #f0fff4; border: 2px solid var(--sap-green); }
+  .compare-box.no  { background: #fff0f0; border: 2px solid var(--sap-red); }
+  .compare-box h4  { font-size: 0.85rem; margin-bottom: 6px; text-transform: uppercase; }
+  .compare-box.yes h4 { color: var(--sap-green); }
+  .compare-box.no  h4 { color: var(--sap-red); }
+  .compare-box p   { font-size: 0.84rem; }
+
+  /* ── Tags ── */
+  .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin: 2px;
+  }
+  .tag-blue   { background: #dbeafe; color: #1e40af; }
+  .tag-green  { background: #dcfce7; color: #166534; }
+  .tag-orange { background: #ffedd5; color: #9a3412; }
+  .tag-red    { background: #fee2e2; color: #991b1b; }
+  .tag-purple { background: #f3e8ff; color: #6b21a8; }
+
+  /* ── Highlight box ── */
+  .alert {
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 0.88rem;
+    margin-bottom: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .alert.warn  { background: #fff8e1; border-left: 4px solid #f59e0b; }
+  .alert.info  { background: var(--sap-light); border-left: 4px solid var(--sap-blue); }
+  .alert.tip   { background: #f0fff4; border-left: 4px solid var(--sap-green); }
+  .alert .icon { font-size: 1.1rem; margin-top: 1px; }
+
+  /* ── TOC ── */
+  .toc {
+    background: white;
+    border-radius: 10px;
+    padding: 20px 24px;
+    border: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  .toc h3 { color: var(--sap-blue); margin-bottom: 12px; font-size: 1rem; }
+  .toc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .toc-item {
+    background: var(--sap-light);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.82rem;
+    color: var(--sap-blue);
+    font-weight: 500;
+    text-align: center;
+  }
+  @media (max-width: 600px) { .toc-grid { grid-template-columns: 1fr 1fr; } }
+
+  /* ── Threshold visual ── */
+  .threshold-bar {
+    display: flex;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 32px;
+    margin: 10px 0;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+  .threshold-bar div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    color: white;
+  }
+
+  hr.divider { border: none; border-top: 1px solid #e9ecef; margin: 8px 0 16px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- HERO -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="hero">
+  <h1>🤖 SAP Generative AI Hub SDK</h1>
+  <p>Interview Preparation Cheat Sheet — One-liners, Diagrams, Tables & Q&A</p>
+  <div class="badge-row">
+    <span class="badge">Orchestration</span>
+    <span class="badge">RAG / Grounding</span>
+    <span class="badge">Data Masking</span>
+    <span class="badge">Content Filtering</span>
+    <span class="badge">LangChain Integration</span>
+    <span class="badge">Chatbot Pattern</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- TOC -->
+  <div class="toc">
+    <h3>📋 Topics Covered</h3>
+    <div class="toc-grid">
+      <div class="toc-item">1. Package & Setup</div>
+      <div class="toc-item">2. Architecture</div>
+      <div class="toc-item">3. Core Classes</div>
+      <div class="toc-item">4. Template & Placeholders</div>
+      <div class="toc-item">5. RAG / Grounding</div>
+      <div class="toc-item">6. Data Masking</div>
+      <div class="toc-item">7. Content Filtering</div>
+      <div class="toc-item">8. Streaming</div>
+      <div class="toc-item">9. Chatbot Pattern</div>
+      <div class="toc-item">10. LangChain</div>
+      <div class="toc-item">11. Response Parsing</div>
+      <div class="toc-item">12. Interview Q&A</div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- 1. PACKAGE -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-title"><span class="icon">📦</span> 1. Package & Setup</div>
+
+  <div class="alert warn">
+    <span class="icon">⚠️</span>
+    <div><strong>Package renamed in 2024!</strong> — <code>generative-ai-hub-sdk</code> is <strong>DEPRECATED</strong>. The new package is <code>sap-ai-sdk-gen</code>.</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Install</h3>
+      <pre><code><span class="cm"># Core SDK</span>
+pip install <span class="st">"sap-ai-sdk-gen[all]"</span>
+
+<span class="cm"># LangChain integration (optional)</span>
+pip install langchain-community \
+            langchain-text-splitters \
+            faiss-cpu</code></pre>
+    </div>
+    <div class="card">
+      <h3>~/.aicore/config.json</h3>
+      <pre><code>{
+  <span class="st">"AICORE_AUTH_URL"</span>:        <span class="st">"...oauth/token"</span>,
+  <span class="st">"AICORE_CLIENT_ID"</span>:       <span class="st">"your-client-id"</span>,
+  <span class="st">"AICORE_CLIENT_SECRET"</span>:   <span class="st">"your-secret"</span>,
+  <span class="st">"AICORE_BASE_URL"</span>:        <span class="st">"https://api.ai.core..."</span>,
+  <span class="st">"AICORE_RESOURCE_GROUP"</span>:  <span class="st">"default"</span>
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Key One-Liners — Setup</h3>
+    <ul class="oneliner-list">
+      <li><span class="dot"></span> SDK auto-reads credentials from <code>~/.aicore/config.json</code> or environment variables — no manual auth code needed.</li>
+      <li><span class="dot"></span> <code>AICORE_RESOURCE_GROUP</code> isolates your models/deployments — default is <code>"default"</code>.</li>
+      <li><span class="dot orange"></span> Old package <code>generative-ai-hub-sdk</code> still runs but is deprecated — always use <code>sap-ai-sdk-gen</code> in new projects.</li>
+      <li><span class="dot green"></span> All 5 pipeline modules (Template, LLM, Grounding, Masking, Filter) are optional except Template + LLM.</li>
+    </ul>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- 2. ARCHITECTURE -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-title"><span class="icon">🏗️</span> 2. Pipeline Architecture</div>
+
+  <div class="card">
+    <h3>Orchestration Pipeline — Data Flow</h3>
+    <div class="pipeline">
+      <div class="pipe-box highlight">
+        <span class="label">👤 User Input</span>
+        <span class="desc">Raw text from user</span>
+      </div>
+      <div class="pipe-arrow">↓</div>
+      <div class="pipe-box optional">
+        <span class="label">🔒 Data Masking</span>
+        <span class="desc">PII removed before anything else &nbsp;<span class="tag tag-orange">Optional</span></span>
+      </div>
+      <div class="pipe-arrow">↓</div>
+      <div class="pipe-box">
+        <span class="label">📝 Prompt Template</span>
+        <span class="desc">Placeholders filled with masked input &nbsp;<span class="tag tag-blue">Required</span></span>
+      </div>
+      <div class="pipe-arrow">↓</div>
+      <div class="pipe-box optional">
+        <span class="label">🔍 Grounding (RAG)</span>
+        <span class="desc">Docs retrieved → injected as context &nbsp;<span class="tag tag-orange">Optional</span></span>
+      </div>
+      <div class="pipe-arrow">↓</div>
+      <div class="pipe-box">
+        <span class="label">🧠 LLM</span>
+        <span class="desc">gpt-4o / claude / gemini generates answer &nbsp;<span class="tag tag-blue">Required</span></span>
+      </div>
+      <div class="pipe-arrow">↓</div>
+      <div class="pipe-box optional">
+        <span class="label">🛡️ Content Filter</span>
+        <span class="desc">Azure safety check on output &nbsp;<span class="tag tag-orange">Optional</span></span>
+      </div>
+      <div class="pipe-arrow">↓</div>
+      <div class="pipe-box highlight">
+        <span class="label">✅ Final Response</span>
+        <span class="desc">Safe, grounded, PII-free answer</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- 3. CORE CLASSES -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-title"><span class="icon">🧩</span> 3. Core Classes at a Glance</div>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr><th>Class</th><th>One-line Purpose</th><th>Analogy</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>OrchestrationService</code></td><td>Main client that executes the pipeline — call <code>.run()</code> or <code>.stream()</code></td><td>The engine 🚗</td></tr>
+        <tr><td><code>OrchestrationConfig</code></td><td>Blueprint that bundles all modules into one config object</td><td>The car spec sheet 📋</td></tr>
+        <tr><td><code>LLM</code></td><td>Descriptor for the model name + parameters (NOT the model itself)</td><td>Choosing which engine 🔧</td></tr>
+        <tr><td><code>Template</code></td><td>Prompt structure with SystemMessage + UserMessage and <code>&#123;&#123;?&#125;&#125;</code> placeholders</td><td>Email template ✉️</td></tr>
+        <tr><td><code>TemplateValue</code></td><td>Maps a placeholder name → runtime value (filled at call time)</td><td>Filling in the blanks ✏️</td></tr>
+        <tr><td><code>SystemMessage</code></td><td>Sets the LLM's persona/behaviour before user messages</td><td>Job description 📄</td></tr>
+        <tr><td><code>UserMessage</code></td><td>The user's question or prompt — supports placeholders</td><td>Customer query 💬</td></tr>
+        <tr><td><code>GroundingModule</code></td><td>Enables RAG — retrieves docs and injects them into the prompt</td><td>Research assistant 📚</td></tr>
+        <tr><td><code>DataMasking</code></td><td>Detects and removes PII before reaching LLM or grounding</td><td>Redaction pen 🖊️</td></tr>
+        <tr><td><code>ContentFilterConfig</code></td><td>Azure safety filter applied to both input and output</td><td>Security bouncer 🚫</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- 4. TEMPLATE -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-title"><span class="icon">📝</span> 4. Templates & Placeholders</div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Placeholder Syntax Rules</h3>
+      <ul class="oneliner-list">
+        <li><span class="dot"></span> Syntax: <code>&#123;&#123;?variable_name&#125;&#125;</code> — double curly brace + <code>?</code> + name.</li>
+        <li><span class="dot"></span> Fill at runtime using <code>TemplateValue(name="x", value="...")</code>.</li>
+        <li><span class="dot green"></span> <code>&#123;&#123; ?grounding_response &#125;&#125;</code> is AUTO-FILLED by grounding module — never fill it manually.</li>
+        <li><span class="dot orange"></span> Unused placeholders cause a runtime error — always provide all values.</li>
+        <li><span class="dot"></span> <code>SystemMessage</code> cannot have placeholders — only <code>UserMessage</code> does.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Template Code Pattern</h3>
+      <pre><code><span class="cm"># Define template once</span>
+template = <span class="fn">Template</span>(messages=[
+  <span class="fn">SystemMessage</span>(<span class="st">"You are an SAP expert."</span>),
+  <span class="fn">UserMessage</span>(<span class="st">"Answer: &#123;&#123;?question&#125;&#125;"</span>)
+])
+
+<span class="cm"># Fill at runtime</span>
+<span class="fn">service.run</span>(
+  config=config,
+  template_values=[
+    <span class="fn">TemplateValue</span>(
+      name=<span class="st">"question"</span>,
+      value=<span class="st">"What is SAP BTP?"</span>
+    )
+  ]
+)</code></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>LLM Parameters Explained</h3>
+    <table>
+      <thead><tr><th>Parameter</th><th>What it does</th><th>Recommended value</th></tr></thead>
+      <tbody>
+        <tr><td><code>name</code></td><td>Model identifier — must match AI Core deployment name</td><td><code>"gpt-4o"</code></td></tr>
+        <tr><td><code>version</code></td><td>Model version — use "latest" unless pinning for stability</td><td><code>"latest"</code></td></tr>
+        <tr><td><code>max_tokens</code></td><td>Maximum tokens in the response (controls output length)</td><td><code>1024</code></td></tr>
+        <tr><td><code>temperature</code></td><td>0.0 = deterministic/factual &nbsp;|&nbsp; 1.0 = creative/random</td><td><code>0.0–0.3</code> for RAG</td></tr>
+        <tr><td><code>top_p</code></td><td>Nucleus sampling — considers only top X% probable tokens</td><td><code>0.95</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- 5. GROUNDING / RAG -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-title"><span class="icon">🔍</span> 5. Grounding / RAG</div>
+
+  <div class="alert info">
+    <span class="icon">💡</span>
+    <div><strong>RAG = Retrieval + Generation.</strong> Instead of relying on LLM training data, retrieve relevant document chunks first, inject them as context, then generate the answer from those chunks.</div>
+  </div>
+
+  <div class="card">
+    <h3>RAG Flow — Step by Step</h3>
+    <div class="pipeline">
+      <div class="pipe-box"><span class="label">1️⃣ User Query</span><span class="desc">"What is the leave policy?"</span></div>
+      <div class="pipe-arrow">↓</div>
+      <div class="pipe-box"><span class="label">2️⃣ Embed Query</span><span class="desc">Convert query text → vector (numbers)</span></div>
+      <div class="pipe-arrow">↓</div>
+      <div class="pipe-box"><span class="label">3️⃣ Similarity Search</span><span class="desc">Find top-K chunks with cosine similarity</span></div>
+      <div class="pipe-arrow">↓</div>
+      <div class="pipe-box"><span class="label">4️⃣ Inject Context</span><span class="desc">Chunks fill &#123;&#123; ?grounding_response &#125;&#125; placeholder</span></div>
+      <div class="pipe-arrow">↓</div>
+      <div class="pipe-box highlight"><span class="label">5️⃣ LLM Generates</span><span class="desc">Answer grounded in your documents</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Two Grounding Source Types</h3>
+    <table>
+      <thead><tr><th>Type</th><th>Use When</th><th>Key Config</th><th>Example Use Case</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="tag tag-blue">help.sap.com</span></td>
+          <td>Answering questions about official SAP products</td>
+          <td><code>data_repository_type="help.sap.com"</code></td>
+          <td>SAP chatbot, product FAQ</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-green">Vector Store</span></td>
+          <td>Answering from YOUR documents (HR, policies, manuals)</td>
+          <td><code>DataRepositoryType.VECTOR.value</code> + repo ID</td>
+          <td>HR bot, internal knowledge base</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>SAP Help Portal Grounding</h3>
+      <pre><code><span class="fn">DocumentGroundingFilter</span>(
+  id=<span class="st">"sap_help"</span>,
+  data_repository_type=<span class="st">"help.sap.com"</span>
+  <span class="cm"># No repo ID needed — SAP manages it</span>
+)</code></pre>
+    </div>
+    <div class="card">
+      <h3>Custom Vector Store Grounding</h3>
+      <pre><code><span class="fn">DocumentGroundingFilter</span>(
+  id=<span class="st">"my_docs"</span>,
+  data_repositories=[<span class="st">"your-repo-id"</span>],
+  data_repository_type=
+    DataRepositoryType.VECTOR.value,
+  search_config={<span class="st">"max_chunk_count"</span>: <span class="nm">5</span>}
+)</code></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Grounding Key One-Liners</h3>
+    <ul class="oneliner-list">
+      <li><span class="dot"></span> <code>input_params</code> — which template placeholder drives the search query.</li>
+      <li><span class="dot"></span> <code>output_param</code> — which placeholder receives the retrieved text (always <code>"grounding_response"</code>).</li>
+      <li><span class="dot green"></span> <code>max_chunk_count</code> — more chunks = more context but more tokens used (default 5).</li>
+      <li><span class="dot orange"></span> Always include <code>&#123;&#123; ?grounding_response &#125;&#125;</code> in your <code>UserMessage</code> when using grounding.</li>
+      <li><span class="dot"></span> Inspect retrieved docs via: <code>result.module_results.grounding.data['grounding_result']</code>.</li>
+      <li><span class="dot purple"></span> Vector repo ID comes from SAP AI Launchpad → Document Grounding section.</li>
+    </ul>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- 6. DATA MASKING -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-title"><span class="icon">🔒</span> 6. Data Masking (PII Protection)</div>
+
+  <div class="card">
+    <h3>Anonymization vs Pseudonymization</h3>
+    <div class="compare">
+      <div class="compare-box yes">
+        <h4>✅ Anonymization</h4>
+        <p>Input: <code>"John emailed john@sap.com"</code><br/>Output: <code>"[PERSON] emailed [EMAIL]"</code><br/><br/>❌ <strong>Irreversible</strong> — cannot recover original values. Use for GDPR compliance.</p>
+      </div>
+      <div class="compare-box no">
+        <h4>🔄 Pseudonymization</h4>
+        <p>Input: <code>"John emailed john@sap.com"</code><br/>Output: <code>"ENTITY_001 emailed ENTITY_002"</code><br/><br/>✅ <strong>Reversible</strong> — SDK maps tokens back. Use when post-processing needs originals.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>PII Types (ProfileEntity)</h3>
+    <table>
+      <thead><tr><th>Entity</th><th>Detects</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><code>EMAIL</code></td><td>Email addresses</td><td>john@sap.com → [EMAIL]</td></tr>
+        <tr><td><code>PHONE</code></td><td>Phone numbers</td><td>+91-9876543210 → [PHONE]</td></tr>
+        <tr><td><code>PERSON</code></td><td>People's names</td><td>John Smith → [PERSON]</td></tr>
+        <tr><td><code>ADDRESS</code></td><td>Physical addresses</td><td>12 Main St → [ADDRESS]</td></tr>
+        <tr><td><code>SAP_IDS_INTERNAL</code></td><td>SAP-specific internal IDs</td><td>Employee ID 12345 → [SAP_ID]</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Data Masking Key One-Liners</h3>
+    <ul class="oneliner-list">
+      <li><span class="dot"></span> Powered by <strong>SAP Data Privacy Integration (DPI)</strong> service — not a local library.</li>
+      <li><span class="dot green"></span> Set <code>mask_grounding_input=True</code> to also mask before sending to the vector store search.</li>
+      <li><span class="dot orange"></span> Data masking runs FIRST in the pipeline — before grounding and LLM.</li>
+      <li><span class="dot"></span> Critical for <strong>GDPR, SOC2, and enterprise compliance</strong> requirements.</li>
+      <li><span class="dot purple"></span> Multiple PII types can be listed in a single <code>entities=[...]</code> list.</li>
+    </ul>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- 7. CONTENT FILTERING -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-title"><span class="icon">🛡️</span> 7. Content Filtering</div>
+
+  <div class="card">
+    <h3>Threshold Scale — 0 (Strictest) → 6 (Most Permissive)</h3>
+    <div class="threshold-bar">
+      <div style="background:#107e3e; flex:1;">0 — Block All</div>
+      <div style="background:#3a8a3a; flex:1;">2 — Low</div>
+      <div style="background:#e76500; flex:1;">4 — Medium</div>
+      <div style="background:#bb0000; flex:1;">6 — Allow Most</div>
+    </div>
+    <p style="font-size:0.82rem; color:var(--muted); margin-top:6px;">💡 Enterprise default = <strong>0</strong>. Use higher values only for specific creative or research tools.</p>
+  </div>
+
+  <div class="card">
+    <h3>Filter Categories &amp; Where Applied</h3>
+    <table>
+      <thead><tr><th>Category</th><th>Blocks</th><th>Applied To</th></tr></thead>
+      <tbody>
+        <tr><td><code>hate</code></td><td>Hate speech and discrimination</td><td>Input + Output</td></tr>
+        <tr><td><code>self_harm</code></td><td>Self-harm encouragement</td><td>Input + Output</td></tr>
+        <tr><td><code>sexual</code></td><td>Explicit sexual content</td><td>Input + Output</td></tr>
+        <tr><td><code>violence</code></td><td>Violent content</td><td>Input + Output</td></tr>
+      </tbody>
+    </table>
+    <div class="alert tip" style="margin-top:12px;">
+      <span class="icon">✅</span>
+      <div>Content filtering is powered by <strong>Azure Content Safety</strong> — a managed cloud service. It intercepts both what the user sends IN and what the LLM returns OUT.</div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- 8. STREAMING -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-title"><span class="icon">⚡</span> 8. Streaming vs Synchronous</div>
+
+  <div class="card">
+    <table>
+      <thead><tr><th></th><th>Synchronous (.run())</th><th>Streaming (.stream())</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Returns</strong></td><td>Full response at once</td><td>Generator of chunks</td></tr>
+        <tr><td><strong>Use for</strong></td><td>APIs, batch processing</td><td>Chat UIs, long responses</td></tr>
+        <tr><td><strong>UX</strong></td><td>Wait → receive all at once</td><td>Real-time token display</td></tr>
+        <tr><td><strong>Access delta</strong></td><td><code>result.choices[0].message.content</code></td><td><code>chunk.choices[0].delta.content</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Streaming Pattern</h3>
+    <pre><code><span class="kw">for</span> chunk <span class="kw">in</span> service.<span class="fn">stream</span>(config=config, template_values=[...]):
+    <span class="kw">if</span> chunk.orchestration_result:
+        delta = chunk.orchestration_result.choices[<span class="nm">0</span>].delta.content <span class="kw">or</span> <span class="st">""</span>
+        <span class="fn">print</span>(delta, end=<span class="st">""</span>, flush=<span class="kw">True</span>)  <span class="cm"># real-time output</span></code></pre>
+    <ul class="oneliner-list" style="margin-top:10px;">
+      <li><span class="dot"></span> Use <code>delta.content</code> (not <code>message.content</code>) for streaming chunks.</li>
+      <li><span class="dot"></span> Always check <code>if chunk.orchestration_result</code> — some chunks may be empty metadata.</li>
+      <li><span class="dot green"></span> <code>flush=True</code> is critical for real-time printing — without it, output buffers.</li>
+    </ul>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- 9. CHATBOT PATTERN -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-title"><span class="icon">💬</span> 9. Multi-Turn Chatbot Pattern</div>
+
+  <div class="alert warn">
+    <span class="icon">⚠️</span>
+    <div><strong>LLMs are stateless.</strong> They have NO memory between calls. You must manually send the entire conversation history with every request.</div>
+  </div>
+
+  <div class="card">
+    <h3>How History Works</h3>
+    <table>
+      <thead><tr><th>Turn</th><th>What you send</th></tr></thead>
+      <tbody>
+        <tr><td>Turn 1</td><td><code>[UserMessage("What is SAP BTP?")]</code> → get reply</td></tr>
+        <tr><td>Turn 2</td><td><code>[UserMessage("BTP?"), AssistantMsg("...reply..."), UserMessage("Tell me more")]</code></td></tr>
+        <tr><td>Turn 3</td><td>Full history of Turns 1 + 2 + new message</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Chatbot Key One-Liners</h3>
+    <ul class="oneliner-list">
+      <li><span class="dot"></span> Pass <code>messages_history=self.history</code> to <code>.run()</code> — the SDK prepends these before template messages.</li>
+      <li><span class="dot"></span> After each turn, append both <code>UserMessage(input)</code> AND the <code>reply_message</code> object to history.</li>
+      <li><span class="dot green"></span> Store the full <code>Message</code> object (not just the text) — the SDK needs role + content.</li>
+      <li><span class="dot orange"></span> History grows with every turn — for long conversations, trim older messages to avoid exceeding token limits.</li>
+      <li><span class="dot purple"></span> Call <code>bot.reset()</code> to clear history and start a fresh conversation.</li>
+    </ul>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- 10. LANGCHAIN -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-title"><span class="icon">🔗</span> 10. LangChain Integration</div>
+
+  <div class="card">
+    <h3>✅ Correct 2024+ Imports vs ❌ Old (Deprecated)</h3>
+    <table>
+      <thead><tr><th>What</th><th>❌ Old (Deprecated)</th><th>✅ New (2024+)</th></tr></thead>
+      <tbody>
+        <tr><td>Vector Store</td><td><code>langchain.vectorstores</code></td><td><code>langchain_community.vectorstores</code></td></tr>
+        <tr><td>Text Splitter</td><td><code>langchain.text_splitter</code></td><td><code>langchain_text_splitters</code></td></tr>
+        <tr><td>RAG Chain</td><td><code>RetrievalQA</code></td><td>LCEL with <code>|</code> pipe operator</td></tr>
+        <tr><td>Chat Model</td><td>Direct <code>ChatOpenAI</code></td><td><code>gen_ai_hub.proxy.langchain.openai.ChatOpenAI</code></td></tr>
+        <tr><td>Embeddings</td><td>Direct <code>OpenAIEmbeddings</code></td><td><code>gen_ai_hub.proxy.langchain.openai.OpenAIEmbeddings</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>LCEL RAG Chain Pattern</h3>
+    <pre><code><span class="cm"># LCEL (LangChain Expression Language) — compose with | operator</span>
+chain = (
+  {
+    <span class="st">"context"</span>:  retriever,             <span class="cm"># auto-retrieves top-k chunks</span>
+    <span class="st">"question"</span>: <span class="fn">RunnablePassthrough</span>()  <span class="cm"># passes user query as-is</span>
+  }
+  | prompt          <span class="cm"># fills {context} and {question} into template</span>
+  | llm             <span class="cm"># sends to LLM → returns AIMessage</span>
+  | <span class="fn">StrOutputParser</span>() <span class="cm"># extracts .content string from AIMessage</span>
+)
+
+result = chain.<span class="fn">invoke</span>(<span class="st">"What is SAP AI Core?"</span>)</code></pre>
+  </div>
+
+  <div class="card">
+    <h3>LangChain vs Orchestration Service — When to Use Which</h3>
+    <table>
+      <thead><tr><th>Scenario</th><th>Best Choice</th></tr></thead>
+      <tbody>
+        <tr><td>SAP enterprise apps (new projects)</td><td><span class="tag tag-blue">Orchestration Service</span></td></tr>
+        <tr><td>Need built-in PII masking + content safety</td><td><span class="tag tag-blue">Orchestration Service</span></td></tr>
+        <tr><td>Already using LangChain ecosystem</td><td><span class="tag tag-green">LangChain</span></td></tr>
+        <tr><td>Custom vector stores (Chroma, Weaviate, Pinecone)</td><td><span class="tag tag-green">LangChain</span></td></tr>
+        <tr><td>Complex agent chains / tools</td><td><span class="tag tag-green">LangChain</span></td></tr>
+        <tr><td>Grounding from SAP Help Portal</td><td><span class="tag tag-blue">Orchestration Service</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- 11. RESPONSE PARSING -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-title"><span class="icon">📤</span> 11. Response Object — Parsing</div>
+
+  <div class="card">
+    <h3>Result Object Navigation</h3>
+    <pre><code>result = service.<span class="fn">run</span>(config=config, template_values=[...])
+
+<span class="cm"># ── Get the LLM's text answer ──</span>
+answer = result.orchestration_result.choices[<span class="nm">0</span>].message.content
+
+<span class="cm"># ── Get retrieved grounding chunks (for debugging/citations) ──</span>
+chunks = result.module_results.grounding.data[<span class="st">'grounding_result'</span>]
+
+<span class="cm"># ── For streaming — access delta instead of message ──</span>
+delta = chunk.orchestration_result.choices[<span class="nm">0</span>].delta.content</code></pre>
+  </div>
+
+  <div class="card">
+    <h3>Response Path Map</h3>
+    <table>
+      <thead><tr><th>What you want</th><th>Path</th></tr></thead>
+      <tbody>
+        <tr><td>Answer text (sync)</td><td><code>result.orchestration_result.choices[0].message.content</code></td></tr>
+        <tr><td>Delta text (stream)</td><td><code>chunk.orchestration_result.choices[0].delta.content</code></td></tr>
+        <tr><td>Grounding chunks</td><td><code>result.module_results.grounding.data['grounding_result']</code></td></tr>
+        <tr><td>Full message object</td><td><code>result.orchestration_result.choices[0].message</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- 12. INTERVIEW Q&A -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-title"><span class="icon">🎯</span> 12. Interview Q&amp;A — Flash Cards</div>
+
+  <div class="qa-block">
+    <div class="qa-q">Q1: What is the current SAP Gen AI SDK package name and why did it change?</div>
+    <div class="qa-a">The new package is <code>sap-ai-sdk-gen</code>. The old <code>generative-ai-hub-sdk</code> was deprecated in 2024 as SAP standardized the SDK naming across their AI product portfolio.</div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q">Q2: What does OrchestrationService do and how do you initialize it?</div>
+    <div class="qa-a">It's the main client that executes your AI pipeline against SAP AI Core. Initialize with just the deployment URL — <code>OrchestrationService(api_url="...")</code>. Credentials are auto-read from <code>~/.aicore/config.json</code>.</div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q">Q3: What is OrchestrationConfig and what can it hold?</div>
+    <div class="qa-a">It's the pipeline blueprint. Required: <code>template</code> + <code>llm</code>. Optional: <code>grounding</code>, <code>data_masking</code>, <code>filtering</code>. All passed as keyword arguments to <code>OrchestrationConfig()</code>.</div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q">Q4: What is the template placeholder syntax in SAP Orchestration?</div>
+    <div class="qa-a"><code>&#123;&#123;?variable_name&#125;&#125;</code> — double curly brace + question mark + name. Fill at runtime with <code>TemplateValue(name="variable_name", value="...")</code> in the <code>template_values</code> list.</div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q">Q5: Explain RAG and how grounding implements it in SAP SDK.</div>
+    <div class="qa-a">RAG = Retrieve relevant document chunks, then generate an answer from them. In SAP SDK, <code>GroundingModule</code> runs a similarity search on a knowledge base, injects retrieved text into <code>&#123;&#123; ?grounding_response &#125;&#125;</code>, and the LLM answers from that context.</div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q">Q6: What are the two grounding source types and when do you use each?</div>
+    <div class="qa-a"><code>help.sap.com</code> — for official SAP product documentation, no setup needed. <code>DataRepositoryType.VECTOR</code> — for your own documents indexed in SAP AI Core's Document Grounding Service, requires a <code>data_repositories</code> ID.</div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q">Q7: What is the difference between Anonymization and Pseudonymization?</div>
+    <div class="qa-a">Anonymization is <strong>irreversible</strong> — "John Smith" → "[PERSON]". Pseudonymization is <strong>reversible</strong> — "John Smith" → "ENTITY_001", and the SDK can map tokens back. Use anonymization for GDPR compliance, pseudonymization when you need original values post-processing.</div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q">Q8: What are the content filter threshold values and what do they mean?</div>
+    <div class="qa-a">0 = block all (strictest), 2 = allow low severity, 4 = allow medium, 6 = allow most (permissive). Applies to 4 categories: <code>hate</code>, <code>self_harm</code>, <code>sexual</code>, <code>violence</code>. Enterprise default is 0.</div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q">Q9: How do you implement a multi-turn chatbot using the Orchestration Service?</div>
+    <div class="qa-a">Maintain a <code>history</code> list of <code>Message</code> objects. On each call pass <code>messages_history=self.history</code> to <code>.run()</code>. After each turn append both the <code>UserMessage</code> and the assistant's reply object to history.</div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q">Q10: What is the difference between .run() and .stream()?</div>
+    <div class="qa-a"><code>.run()</code> waits for the complete response and returns it at once — best for APIs and batch jobs. <code>.stream()</code> returns a generator of partial chunks — best for chat UIs where real-time token display improves UX. Access delta via <code>chunk.orchestration_result.choices[0].delta.content</code>.</div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q">Q11: What are the correct LangChain imports for 2024+ and what changed?</div>
+    <div class="qa-a">Use <code>langchain_community.vectorstores</code> (not <code>langchain.vectorstores</code>), <code>langchain_text_splitters</code> (not <code>langchain.text_splitter</code>), and LCEL chains with <code>|</code> instead of deprecated <code>RetrievalQA</code>. Chat model and embeddings come from <code>gen_ai_hub.proxy.langchain.openai</code>.</div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q">Q12: How do you inspect the retrieved grounding chunks in the response?</div>
+    <div class="qa-a"><code>result.module_results.grounding.data['grounding_result']</code> — useful for debugging, showing sources to users, or building citation features.</div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q">Q13: What is LCEL (LangChain Expression Language)?</div>
+    <div class="qa-a">A composability syntax that chains LangChain components using the <code>|</code> pipe operator — like Unix pipes. Example: <code>retriever | prompt | llm | StrOutputParser()</code>. Replaces older chain classes like <code>RetrievalQA</code>.</div>
+  </div>
+
+  <div class="qa-block">
+    <div class="qa-q">Q14: What is the order in which modules execute in the pipeline?</div>
+    <div class="qa-a">Data Masking → Prompt Template → Grounding → LLM → Content Filter. Masking always runs first so PII is never sent to grounding or LLM. Content filter always runs last to check the LLM output before returning to the user.</div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- MEMORY AID -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-title"><span class="icon">🧠</span> Memory Aids</div>
+
+  <div class="card">
+    <h3>Remember the Pipeline Order with: <em>"My Tender Grilled Lobster Comes Fresh"</em></h3>
+    <table>
+      <thead><tr><th>Letter</th><th>Module</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td><strong>M</strong>y</td><td>Masking</td><td>Remove PII first</td></tr>
+        <tr><td><strong>T</strong>ender</td><td>Template</td><td>Fill placeholders</td></tr>
+        <tr><td><strong>G</strong>rilled</td><td>Grounding</td><td>Retrieve context</td></tr>
+        <tr><td><strong>L</strong>obster</td><td>LLM</td><td>Generate answer</td></tr>
+        <tr><td><strong>C</strong>omes</td><td>Content Filter</td><td>Safety check output</td></tr>
+        <tr><td><strong>F</strong>resh</td><td>Final Response</td><td>Deliver to user</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <h3>🎯 Temperature Rules</h3>
+      <ul class="oneliner-list">
+        <li><span class="dot green"></span> 0.0 → Factual / RAG answers</li>
+        <li><span class="dot"></span> 0.3–0.5 → Balanced</li>
+        <li><span class="dot orange"></span> 0.7–1.0 → Creative writing</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>📌 Placeholder Rules</h3>
+      <ul class="oneliner-list">
+        <li><span class="dot"></span> Syntax: <code>&#123;&#123;?name&#125;&#125;</code></li>
+        <li><span class="dot green"></span> Grounding auto-fills <code>&#123;&#123; ?grounding_response &#125;&#125;</code></li>
+        <li><span class="dot red"></span> Never manually fill grounding placeholder</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🔑 Key Numbers</h3>
+      <ul class="oneliner-list">
+        <li><span class="dot"></span> Filter strictness: <strong>0–6</strong></li>
+        <li><span class="dot green"></span> Default max_chunks: <strong>5</strong></li>
+        <li><span class="dot orange"></span> Default max_tokens: <strong>1024</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="text-align:center; margin-top:40px; padding:20px; background:white; border-radius:10px; border:1px solid var(--border);">
+    <p style="font-size:0.85rem; color:var(--muted);">📄 Based on <strong>sap_genai_sdk_full_tutorial.py</strong> — SAP Generative AI Hub SDK Interview Learning Guide</p>
+    <p style="font-size:0.8rem; color:#adb5bd; margin-top:4px;">For interview preparation purposes only. SAP and related trademarks are property of SAP SE.</p>
+  </div>
+
+</div><!-- /container -->
+</body>
+</html>
